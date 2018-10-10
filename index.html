@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>WebSocket</title>
+</head>
+
+<body>
+    <h1>Chat Room</h1>
+    <input type="text" id="sendTxt" />
+    <button id="sendBtn">Send</button>
+
+    <script type="text/javascript">
+        let webSocket = new WebSocket("ws://localhost:3000/");
+        function showMessage(str, type) {
+            let div = document.createElement('div')
+            div.innerHTML = str
+            if (type == "enter") {
+                div.style.color = 'blue'
+            } else if (type == "message") {
+            } else if (type == "leave") {
+                div.style.color = 'red'
+            }
+            document.body.appendChild(div)
+        }
+        webSocket.onopen = function () {
+            console.log('websocket open');
+            document.getElementById('sendBtn').onclick = function () {
+                let txt = document.getElementById('sendTxt').value;
+                if (txt) {
+                    webSocket.send(txt)
+                }
+            }
+        }
+        webSocket.onclose = function () {
+            console.log('websocket close');
+        }
+        webSocket.onmessage = function (e) {
+            console.log(e.data)
+            let msg = JSON.parse(e.data);
+            showMessage(msg.data, msg.type);
+        }
+    </script>
+</body>
+
+</html>
